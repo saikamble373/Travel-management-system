@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-// Show errors during development (disable on production)
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
@@ -12,18 +11,15 @@ if (strlen($_SESSION['alogin']) == 0) {
     exit();
 }
 
-// Initialize messages
 $msg   = "";
 $error = "";
 
-// Generate CSRF token if not set
 if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
 
 if (isset($_POST['submit'])) {
 
-    // CSRF check
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
         die("CSRF validation failed. Please go back and try again.");
     }
@@ -37,13 +33,11 @@ if (isset($_POST['submit'])) {
     $duration  = trim($_POST['duration']);
     $groupsize = trim($_POST['groupsize']);
 
-    // Validate rating
     $rating = floatval($_POST['rating']);
     if ($rating < 0 || $rating > 5) {
         $error = "Rating must be a number between 0 and 5.";
     }
 
-    // Validate and upload image
     if (empty($error)) {
         if (!isset($_FILES['packageimage']) || $_FILES['packageimage']['error'] !== UPLOAD_ERR_OK) {
             $error = "Please upload a package image.";
@@ -65,7 +59,6 @@ if (isset($_POST['submit'])) {
         }
     }
 
-    // Insert into DB
     if (empty($error)) {
         $sql = "INSERT INTO tbltourpackages
                     (PackageName, PackageType, PackageLocation, PackagePrice, PackageFetures, PackageDetails, PackageImage, duration, groupsize, rating)
@@ -101,6 +94,7 @@ if (isset($_POST['submit'])) {
 <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
 <link href="css/bootstrap.min.css" rel='stylesheet' type='text/css' />
 <link href="css/style.css" rel='stylesheet' type='text/css' />
+<link href="css/admin-theme.css" rel='stylesheet' type='text/css' />
 <link rel="stylesheet" href="css/morris.css" type="text/css"/>
 <link href="css/font-awesome.css" rel="stylesheet">
 <script src="js/jquery-2.1.4.min.js"></script>
@@ -124,6 +118,8 @@ if (isset($_POST['submit'])) {
         -webkit-box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
         box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
     }
+    #ai-gen-btn { transition: opacity 0.2s; }
+    #ai-gen-btn:disabled { opacity: .6; cursor: not-allowed; }
 </style>
 </head>
 <body>
@@ -154,7 +150,6 @@ if (isset($_POST['submit'])) {
                 <div class="tab-pane active" id="horizontal-form">
                     <form class="form-horizontal" name="package" method="post" enctype="multipart/form-data">
 
-                        <!-- CSRF Token -->
                         <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
 
                         <!-- Package Name -->
@@ -193,7 +188,7 @@ if (isset($_POST['submit'])) {
                             </div>
                         </div>
 
-                        <!-- ✅ NEW: Duration -->
+                        <!-- Duration -->
                         <div class="form-group">
                             <label class="col-sm-2 control-label">Duration</label>
                             <div class="col-sm-8">
@@ -202,7 +197,7 @@ if (isset($_POST['submit'])) {
                             </div>
                         </div>
 
-                        <!-- ✅ NEW: Group Size -->
+                        <!-- Group Size -->
                         <div class="form-group">
                             <label class="col-sm-2 control-label">Group Size</label>
                             <div class="col-sm-8">
@@ -211,7 +206,7 @@ if (isset($_POST['submit'])) {
                             </div>
                         </div>
 
-                        <!-- ✅ NEW: Rating -->
+                        <!-- Rating -->
                         <div class="form-group">
                             <label class="col-sm-2 control-label">Rating (0–5)</label>
                             <div class="col-sm-8">
@@ -229,12 +224,24 @@ if (isset($_POST['submit'])) {
                             </div>
                         </div>
 
-                        <!-- Package Details -->
+                        <!-- Package Details — with AI Generate button -->
                         <div class="form-group">
                             <label class="col-sm-2 control-label">Package Details</label>
                             <div class="col-sm-8">
                                 <textarea class="form-control" rows="5" cols="50" name="packagedetails"
+                                    id="packagedetails"
                                     placeholder="Package Details" required></textarea>
+
+                                <button type="button" id="ai-gen-btn"
+                                    style="margin-top:8px; background:#0ea5e9; color:#fff; border:none;
+                                           border-radius:6px; padding:8px 18px; font-size:13px;
+                                           cursor:pointer; display:flex; align-items:center; gap:7px;">
+                                    <i class="fa fa-magic"></i>
+                                    <span id="ai-gen-label">AI Generate Description</span>
+                                </button>
+                                <small style="color:#888; display:block; margin-top:4px;">
+                                    Fill in Name, Location, Type &amp; Price above, then click to auto-generate.
+                                </small>
                             </div>
                         </div>
 
@@ -264,7 +271,6 @@ if (isset($_POST['submit'])) {
         </div>
     </div>
 
-    <!-- script for sticky-nav -->
     <script>
     $(document).ready(function() {
         var navoffeset = $(".header-main").offset().top;
@@ -302,6 +308,51 @@ $(".sidebar-icon").click(function() {
     toggle = !toggle;
 });
 </script>
+
+<!-- ── AI Description Generator Script ── -->
+<script>
+document.getElementById('ai-gen-btn').addEventListener('click', function(){
+    var name     = (document.querySelector('[name=packagename]')     || {value:''}).value.trim();
+    var location = (document.querySelector('[name=packagelocation]') || {value:''}).value.trim();
+    var ptype    = (document.querySelector('[name=packagetype]')     || {value:''}).value.trim();
+    var price    = (document.querySelector('[name=packageprice]')    || {value:''}).value.trim();
+    var duration = (document.querySelector('[name=duration]')        || {value:''}).value.trim();
+    var features = (document.querySelector('[name=packagefeatures]') || {value:''}).value.trim();
+
+    if(!name || !location){
+        alert('Please fill in at least the Package Name and Location first.');
+        return;
+    }
+
+    var btn   = document.getElementById('ai-gen-btn');
+    var label = document.getElementById('ai-gen-label');
+    btn.disabled = true;
+    label.textContent = 'Generating…';
+
+    fetch('http://localhost:5000/generate-desc', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({name:name, location:location, type:ptype,
+                              price:price, duration:duration, features:features})
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+        if(data.description){
+            document.getElementById('packagedetails').value = data.description;
+        } else {
+            alert('AI could not generate a description. ' + (data.error||''));
+        }
+    })
+    .catch(function(){
+        alert('Could not reach AI service. Make sure ai_service.py is running.');
+    })
+    .finally(function(){
+        btn.disabled = false;
+        label.textContent = 'AI Generate Description';
+    });
+});
+</script>
+<!-- ── end AI script ── -->
 
 <script src="js/jquery.nicescroll.js"></script>
 <script src="js/scripts.js"></script>

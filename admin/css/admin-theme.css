@@ -1,0 +1,285 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap');
+
+/* ==================== GLOBALS ==================== */
+:root {
+    --primary: #0a3460;
+    --primary-light: #0f4c81;
+    --sky: #0ea5e9;
+    --accent: #f97316;
+    --dark: #1e293b;
+    --bg: #f1f5f9;
+    --card: #ffffff;
+    --radius: 12px;
+}
+
+body {
+    font-family: 'Inter', sans-serif !important;
+    background: var(--bg) !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+}
+
+/* ==================== HEADER ==================== */
+.header-main {
+    background: white !important;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04) !important;
+    padding: 0 20px !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo-w3-agile h1 a {
+    color: var(--primary) !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.5px;
+}
+
+/* User details dropdown in header */
+.profile_details_drop a {
+    color: var(--dark) !important;
+}
+
+.profile_details_drop {
+    background: transparent !important;
+}
+
+.user-name p {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    color: var(--primary) !important;
+}
+
+.user-name span {
+    color: var(--sky) !important;
+}
+
+/* ==================== SIDEBAR ==================== */
+.sidebar-menu {
+    background: var(--primary) !important;
+    box-shadow: 4px 0 24px rgba(15, 23, 42, 0.1);
+}
+
+.sidebar-menu .logo {
+    background: var(--primary-light) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+#menu li a {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.7) !important;
+    border: none !important;
+    transition: all 0.3s;
+}
+
+#menu li a:hover,
+#menu li.active>a {
+    background: var(--primary-light) !important;
+    color: white !important;
+    padding-left: 30px !important;
+    /* smooth hover indent */
+    border-left: 4px solid var(--accent) !important;
+}
+
+#menu li a i {
+    color: var(--sky) !important;
+}
+
+/* ==================== BREADCRUMBS ==================== */
+.breadcrumb {
+    background: transparent !important;
+    margin-bottom: 24px !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+}
+
+.breadcrumb-item a {
+    color: var(--primary-light) !important;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+/* ==================== DASHBOARD METRICS (FOUR-GRIDS) ==================== */
+.four-grids {
+    margin-bottom: 24px !important;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    padding: 0 15px;
+}
+
+.four-grids>a {
+    width: calc(33.333% - 16px);
+    display: block;
+    text-decoration: none;
+}
+
+@media (max-width: 991px) {
+    .four-grids>a {
+        width: calc(50% - 12px);
+    }
+}
+
+@media (max-width: 600px) {
+    .four-grids>a {
+        width: 100%;
+    }
+}
+
+.four-grid {
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* Reset default heights and pads */
+.four-agileits,
+.four-agileinfo,
+.four-wthree,
+.four-w3ls {
+    padding: 30px 24px !important;
+    border-radius: var(--radius) !important;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06) !important;
+    display: flex !important;
+    align-items: center;
+    gap: 20px;
+    transition: transform 0.3s, box-shadow 0.3s;
+    height: auto !important;
+}
+
+.four-agileits:hover,
+.four-agileinfo:hover,
+.four-wthree:hover,
+.four-w3ls:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12) !important;
+}
+
+/* Specific colors using gradients */
+.four-agileits {
+    background: linear-gradient(135deg, #10b981, #059669) !important;
+}
+
+/* Green */
+.four-agileinfo {
+    background: linear-gradient(135deg, #0ea5e9, #0284c7) !important;
+}
+
+/* Blue */
+.four-wthree {
+    background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+}
+
+/* Orange/Yellow */
+.four-w3ls {
+    background: linear-gradient(135deg, #f43f5e, #e11d48) !important;
+}
+
+/* Red/Pink */
+
+.four-grid .icon {
+    float: none !important;
+    margin: 0 !important;
+    width: auto !important;
+    height: auto !important;
+    background: transparent !important;
+}
+
+.four-grid .icon i {
+    font-size: 40px !important;
+    color: white !important;
+    opacity: 0.8;
+}
+
+.four-text {
+    float: none !important;
+    flex: 1;
+    text-align: right;
+}
+
+.four-text h3 {
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-size: 14px !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700 !important;
+    margin: 0 0 6px !important;
+    font-family: 'Inter', sans-serif !important;
+}
+
+.four-text h4 {
+    color: white !important;
+    font-size: 32px !important;
+    font-weight: 800 !important;
+    margin: 0 !important;
+    line-height: 1 !important;
+}
+
+/* ==================== FORMS, TABLES, PANELS ==================== */
+.agile-info-w3ls,
+.agile-grids {
+    background: white !important;
+    border-radius: var(--radius) !important;
+    padding: 30px !important;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06) !important;
+    margin-bottom: 24px !important;
+}
+
+.w3l-table-info h2 {
+    color: var(--primary) !important;
+    margin-bottom: 20px !important;
+    font-size: 22px !important;
+    font-weight: 700 !important;
+}
+
+table th {
+    background: var(--bg) !important;
+    color: var(--dark) !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-weight: 700 !important;
+    text-transform: uppercase;
+    font-size: 12px;
+    border-bottom: 2px solid #e2e8f0 !important;
+}
+
+table td {
+    font-size: 14px;
+    color: #475569;
+    border-color: #f1f5f9 !important;
+}
+
+.btn-primary {
+    background: var(--primary) !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 10px 24px !important;
+    font-weight: 600 !important;
+    transition: all 0.3s;
+}
+
+.btn-primary:hover {
+    background: var(--primary-light) !important;
+    box-shadow: 0 4px 12px rgba(10, 52, 96, 0.3) !important;
+}
+
+/* Dashboard Morris Chart Box */
+#hero-area {
+    background: transparent !important;
+}
+
+.grid-bottom {
+    background: white !important;
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+}

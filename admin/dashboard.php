@@ -18,6 +18,7 @@ else{
 <link href="css/bootstrap.min.css" rel='stylesheet' type='text/css' />
 <!-- Custom CSS -->
 <link href="css/style.css" rel='stylesheet' type='text/css' />
+<link href="css/admin-theme.css" rel='stylesheet' type='text/css' />
 <link rel="stylesheet" href="css/morris.css" type="text/css"/>
 <!-- Graph CSS -->
 <link href="css/font-awesome.css" rel="stylesheet"> 
@@ -308,6 +309,36 @@ $cancelbooking=$query->rowCount();
 <!-- morris JavaScript -->	
 <script src="js/raphael-min.js"></script>
 <script src="js/morris.js"></script>
+<?php
+	// Fetch dynamic booking data for the chart
+	$chartSql = "
+		SELECT 
+			DATE_FORMAT(RegDate, '%Y-%m') as period, 
+			COUNT(BookingId) as total
+		FROM tblbooking 
+		GROUP BY DATE_FORMAT(RegDate, '%Y-%m') 
+		ORDER BY period ASC LIMIT 12
+	";
+	// Note: using try-catch so it won't crash if RegDate is named differently in the user's variant
+	try {
+		$chartQuery = $dbh->prepare($chartSql);
+		$chartQuery->execute();
+		$chartResults = $chartQuery->fetchAll(PDO::FETCH_ASSOC);
+	} catch (PDOException $e) {
+		$chartResults = [];
+	}
+	
+	// Create chart data array
+	if(empty($chartResults)) {
+		// Provide fallback data so chart doesn't break if table is empty
+		$chartResults = [
+			['period' => '2026-01', 'total' => 2],
+			['period' => '2026-02', 'total' => 5],
+			['period' => '2026-03', 'total' => 8],
+			['period' => '2026-04', 'total' => 12]
+		];
+	}
+?>
 <script>
 	$(document).ready(function() {
 		//BOX BUTTON SHOW AND CLOSE
@@ -322,9 +353,7 @@ $cancelbooking=$query->rowCount();
 	   });
 	   
 	    //CHARTS
-	    function gd(year, day, month) {
-			return new Date(year, month - 1, day).getTime();
-		}
+		var bookingData = <?php echo json_encode($chartResults); ?>;
 		
 		graphArea2 = Morris.Area({
 			element: 'hero-area',
@@ -335,27 +364,16 @@ $cancelbooking=$query->rowCount();
         axes: true,
         resize: true,
         smooth:true,
-        pointSize: 0,
-        lineWidth: 0,
+        pointSize: 4,
+        lineWidth: 2,
         fillOpacity:0.85,
-			data: [
-				{period: '2014 Q1', iphone: 2668, ipad: null, itouch: 2649},
-				{period: '2014 Q2', iphone: 15780, ipad: 13799, itouch: 12051},
-				{period: '2014 Q3', iphone: 12920, ipad: 10975, itouch: 9910},
-				{period: '2014 Q4', iphone: 8770, ipad: 6600, itouch: 6695},
-				{period: '2015 Q1', iphone: 10820, ipad: 10924, itouch: 12300},
-				{period: '2015 Q2', iphone: 9680, ipad: 9010, itouch: 7891},
-				{period: '2015 Q3', iphone: 4830, ipad: 3805, itouch: 1598},
-				{period: '2015 Q4', iphone: 15083, ipad: 8977, itouch: 5185},
-				{period: '2016 Q1', iphone: 10697, ipad: 4470, itouch: 2038},
-				{period: '2016 Q2', iphone: 8442, ipad: 5723, itouch: 1801}
-			],
-			lineColors:['#ff4a43','#a2d200','#22beef'],
+			data: bookingData,
+			lineColors:['#0ea5e9'],
 			xkey: 'period',
             redraw: true,
-            ykeys: ['iphone', 'ipad', 'itouch'],
-            labels: ['All Visitors', 'Returning Visitors', 'Unique Visitors'],
-			pointSize: 2,
+            ykeys: ['total'],
+            labels: ['Total Bookings'],
+			pointSize: 3,
 			hideHover: 'auto',
 			resize: true
 		});

@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-// ✅ FIX 1: Show errors during development (disable on production)
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
@@ -12,19 +11,16 @@ if (strlen($_SESSION['alogin']) == 0) {
     exit();
 }
 
-// ✅ FIX 2: Validate $pid early
 $pid = intval($_GET['pid']);
 if ($pid <= 0) {
     die("Invalid package ID.");
 }
 
-// ✅ FIX 3: Initialize $msg to avoid undefined variable notice
 $msg = "";
 $error = "";
 
 if (isset($_POST['submit'])) {
 
-    // ✅ FIX 6: CSRF check
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
         die("CSRF validation failed. Please go back and try again.");
     }
@@ -38,7 +34,6 @@ if (isset($_POST['submit'])) {
     $duration  = trim($_POST['duration']);
     $groupsize = trim($_POST['groupsize']);
 
-    // ✅ FIX 5: Validate rating (must be numeric between 0 and 5)
     $rating = floatval($_POST['rating']);
     if ($rating < 0 || $rating > 5) {
         $error = "Rating must be a number between 0 and 5.";
@@ -46,7 +41,6 @@ if (isset($_POST['submit'])) {
 
     if (empty($error)) {
 
-        // ✅ FIX 4: Handle optional image upload
         $imageUpdate = "";
         if (isset($_FILES['packageimage']) && $_FILES['packageimage']['error'] === UPLOAD_ERR_OK) {
             $allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
@@ -105,12 +99,10 @@ if (isset($_POST['submit'])) {
     }
 }
 
-// ✅ FIX 6: Generate CSRF token if not set
 if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
 
-// Fetch current package data
 $sql = "SELECT * FROM TblTourPackages WHERE PackageId=:pid";
 $query = $dbh->prepare($sql);
 $query->bindParam(':pid', $pid, PDO::PARAM_INT);
@@ -125,6 +117,10 @@ $results = $query->fetchAll(PDO::FETCH_OBJ);
     <link href="css/style.css" rel="stylesheet"/>
     <link href="css/font-awesome.css" rel="stylesheet">
     <script src="js/jquery-2.1.4.min.js"></script>
+    <style>
+        #ai-gen-btn { transition: opacity 0.2s; }
+        #ai-gen-btn:disabled { opacity: .6; cursor: not-allowed; }
+    </style>
 </head>
 <body>
 <div class="page-container">
@@ -155,7 +151,6 @@ $results = $query->fetchAll(PDO::FETCH_OBJ);
 
                         <form class="form-horizontal" method="post" enctype="multipart/form-data">
 
-                            <!-- ✅ FIX 6: CSRF token -->
                             <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
 
                             <!-- Package Name -->
@@ -214,7 +209,7 @@ $results = $query->fetchAll(PDO::FETCH_OBJ);
                                 </div>
                             </div>
 
-                            <!-- ✅ FIX 5: Rating - number input with range -->
+                            <!-- Rating -->
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">Rating (0–5)</label>
                                 <div class="col-sm-8">
@@ -233,15 +228,27 @@ $results = $query->fetchAll(PDO::FETCH_OBJ);
                                 </div>
                             </div>
 
-                            <!-- Package Details -->
+                            <!-- Package Details — with AI Generate button -->
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">Package Details</label>
                                 <div class="col-sm-8">
-                                    <textarea class="form-control" name="packagedetails"><?php echo htmlentities($result->PackageDetails); ?></textarea>
+                                    <textarea class="form-control" rows="5" cols="50"
+                                        name="packagedetails" id="packagedetails"><?php echo htmlentities($result->PackageDetails); ?></textarea>
+
+                                    <button type="button" id="ai-gen-btn"
+                                        style="margin-top:8px; background:#0ea5e9; color:#fff; border:none;
+                                               border-radius:6px; padding:8px 18px; font-size:13px;
+                                               cursor:pointer; display:flex; align-items:center; gap:7px;">
+                                        <i class="fa fa-magic"></i>
+                                        <span id="ai-gen-label">AI Generate Description</span>
+                                    </button>
+                                    <small style="color:#888; display:block; margin-top:4px;">
+                                        Fill in Name, Location, Type &amp; Price above, then click to auto-generate.
+                                    </small>
                                 </div>
                             </div>
 
-                            <!-- ✅ FIX 4: Image - show current + allow upload -->
+                            <!-- Image -->
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">Current Image</label>
                                 <div class="col-sm-8">
@@ -271,6 +278,52 @@ $results = $query->fetchAll(PDO::FETCH_OBJ);
         </div>
     </div>
     <?php include('includes/sidebarmenu.php'); ?>
+
+    <!-- ── AI Description Generator Script ── -->
+    <script>
+    document.getElementById('ai-gen-btn').addEventListener('click', function(){
+        var name     = (document.querySelector('[name=packagename]')     || {value:''}).value.trim();
+        var location = (document.querySelector('[name=packagelocation]') || {value:''}).value.trim();
+        var ptype    = (document.querySelector('[name=packagetype]')     || {value:''}).value.trim();
+        var price    = (document.querySelector('[name=packageprice]')    || {value:''}).value.trim();
+        var duration = (document.querySelector('[name=duration]')        || {value:''}).value.trim();
+        var features = (document.querySelector('[name=packagefeatures]') || {value:''}).value.trim();
+
+        if(!name || !location){
+            alert('Please fill in at least the Package Name and Location first.');
+            return;
+        }
+
+        var btn   = document.getElementById('ai-gen-btn');
+        var label = document.getElementById('ai-gen-label');
+        btn.disabled = true;
+        label.textContent = 'Generating…';
+
+        fetch('http://localhost:5000/generate-desc', {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({name:name, location:location, type:ptype,
+                                  price:price, duration:duration, features:features})
+        })
+        .then(function(r){ return r.json(); })
+        .then(function(data){
+            if(data.description){
+                document.getElementById('packagedetails').value = data.description;
+            } else {
+                alert('AI could not generate a description. ' + (data.error||''));
+            }
+        })
+        .catch(function(){
+            alert('Could not reach AI service. Make sure ai_service.py is running.');
+        })
+        .finally(function(){
+            btn.disabled = false;
+            label.textContent = 'AI Generate Description';
+        });
+    });
+    </script>
+    <!-- ── end AI script ── -->
+
     <script src="js/bootstrap.min.js"></script>
 </body>
 </html>

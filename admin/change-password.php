@@ -43,6 +43,7 @@ $error="Your current password is wrong";
 
 <link href="css/bootstrap.min.css" rel='stylesheet' type='text/css' />
 <link href="css/style.css" rel='stylesheet' type='text/css' />
+<link href="css/admin-theme.css" rel='stylesheet' type='text/css' />
 <link rel="stylesheet" href="css/morris.css" type="text/css"/>
 <link href="css/font-awesome.css" rel="stylesheet"> 
 <script src="js/jquery-2.1.4.min.js"></script>

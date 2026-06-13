@@ -45,6 +45,7 @@ echo "<script>alert('Email id or Mobile no is invalid');</script>";
 <link href="css/bootstrap.min.css" rel='stylesheet' type='text/css' />
 <!-- Custom CSS -->
 <link href="css/style.css" rel='stylesheet' type='text/css' />
+<link href="css/admin-theme.css" rel='stylesheet' type='text/css' />
 <link rel="stylesheet" href="css/morris.css" type="text/css"/>
 <!-- Graph CSS -->
 <link href="css/font-awesome.css" rel="stylesheet">

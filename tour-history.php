@@ -64,6 +64,7 @@ $error="You can't cancel booking before 24 hours";
 <script type="applijewelleryion/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
 <link href="css/bootstrap.css" rel='stylesheet' type='text/css' />
 <link href="css/style.css" rel='stylesheet' type='text/css' />
+<link href="css/theme.css" rel='stylesheet' type='text/css' />
 <link href='//fonts.googleapis.com/css?family=Open+Sans:400,700,600' rel='stylesheet' type='text/css'>
 <link href='//fonts.googleapis.com/css?family=Roboto+Condensed:400,700,300' rel='stylesheet' type='text/css'>
 <link href='//fonts.googleapis.com/css?family=Oswald' rel='stylesheet' type='text/css'>
@@ -98,13 +99,11 @@ $error="You can't cancel booking before 24 hours";
 		</style>
 </head>
 <body>
-<!-- top-header -->
-<div class="top-header">
 <?php include('includes/header.php');?>
-<div class="banner-1 ">
-	<div class="container">
-		<h1 class="wow zoomIn animated animated" data-wow-delay=".5s" style="visibility: visible; animation-delay: 0.5s; animation-name: zoomIn;" style="color:#000 !important;">TravelMate</h1>
-	</div>
+
+<div class="tm-page-hero">
+	<h1 class="wow zoomIn animated" data-wow-delay=".5s">Tour History</h1>
+	<p>Track your past and upcoming bookings</p>
 </div>
 <!--- /banner-1 ---->
 <!--- privacy ---->
@@ -169,6 +168,12 @@ echo "Canceled by admin at " .$result->upddate;
 <?php if($result->status==2)
 {
 	?><td>Cancelled</td>
+<?php } elseif($result->status==1) { ?>
+<td>
+    <a href="tour-history.php?bkid=<?php echo htmlentities($result->bookid);?>" onclick="return confirm('Do you really want to cancel booking')" >Cancel</a>
+    <br><br>
+    <a href="invoice.php?bkid=<?php echo htmlentities($result->bookid);?>" target="_blank" style="background:#0ea5e9; color:white; padding:4px 10px; border-radius:4px; font-size:12px; text-decoration:none;">View Invoice</a>
+</td>
 <?php } else {?>
 <td><a href="tour-history.php?bkid=<?php echo htmlentities($result->bookid);?>" onclick="return confirm('Do you really want to cancel booking')" >Cancel</a></td>
 <?php }?>

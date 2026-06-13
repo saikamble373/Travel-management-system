@@ -1,89 +1,90 @@
-<?php if($_SESSION['login'])
-{?>
-<div class="top-header">
-	<div class="container">
-		<ul class="tp-hd-lft wow fadeInLeft animated" data-wow-delay=".5s">
-			<li class="hm"><a href="index.html"><i class="fa fa-home"></i></a></li>
-			<li class="prnt"><a href="profile.php">My Profile</a></li>
-				<li class="prnt"><a href="change-password.php">Change Password</a></li>
-			<li class="prnt"><a href="tour-history.php">My Tour History</a></li>
-			<li class="prnt"><a href="issuetickets.php">Raised Tickets</a></li>
-		</ul>
-		<ul class="tp-hd-rgt wow fadeInRight animated" data-wow-delay=".5s"> 
-			<li class="tol">Welcome :</li>				
-			<li class="sig"><?php echo htmlentities($_SESSION['login']);?></li> 
-			<li class="sigi"><a href="logout.php" >/ Logout</a></li>
-        </ul>
-		<div class="clearfix"></div>
-	</div>
-</div><?php } else {?>
-<div class="top-header">
-	<div class="container">
-		<ul class="tp-hd-lft wow fadeInLeft animated" data-wow-delay=".5s">
-			<li class="hm"><a href="index.php"><i class="fa fa-home"></i></a></li>
-				<li class="hm"><a href="admin/index.php">Admin Login</a></li>
-		</ul>
-		<ul class="tp-hd-rgt wow fadeInRight animated" data-wow-delay=".5s"> 
-			<li class="tol">Toll Number : 8108465656</li>				
-			<li class="sig"><a href="#" data-toggle="modal" data-target="#myModal" >Sign Up</a></li> 
-			<li class="sigi"><a href="#" data-toggle="modal" data-target="#myModal4" >/ Sign In</a></li>
-        </ul>
-		<div class="clearfix"></div>
-	</div>
-</div>
-<?php }?>
-<!--- /top-header ---->
-<!--- header ---->
-<div class="header">
-	<div class="container">
-		<div class="logo wow fadeInDown animated" data-wow-delay=".5s">
-    <a href="index.php">
-        Travel<span style="color:#2ecc71;">Mate</span>
-    </a>	
-</div>
-	
-		<div class="clearfix"></div>
-	</div>
-</div>
-<!--- /header ---->
-<!--- footer-btm ---->
-<div class="footer-btm wow fadeInLeft animated" data-wow-delay=".5s">
-	<div class="container">
-	<div class="navigation">
-			<nav class="navbar navbar-default">
-				<!-- Brand and toggle get grouped for better mobile display -->
-				<div class="navbar-header">
-				  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-					<span class="sr-only">Toggle navigation</span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-				  </button>
-				</div>
-				<!-- Collect the nav links, forms, and other content for toggling -->
-				<div class="collapse navbar-collapse nav-wil" id="bs-example-navbar-collapse-1">
-					<nav class="cl-effect-1">
-						<ul class="nav navbar-nav">
-							<li><a href="index.php">Home</a></li>
-							<li><a href="page.php?type=aboutus">About</a></li>
-								<li><a href="package-list.php">Tour Packages</a></li>
-								<li><a href="page.php?type=privacy">Privacy Policy</a></li>
-								<li><a href="page.php?type=terms">Terms of Use</a></li>
-								<li><a href="page.php?type=contact">Contact Us</a></li>
-								<?php if($_SESSION['login'])
-{?>
-								<li>Need Help?<a href="#" data-toggle="modal" data-target="#myModal3"> / Write Us </a>  </li>
-								<?php } else { ?>
-								<li><a href="enquiry.php"> Enquiry </a>  </li>
-								<?php } ?>
-								<div class="clearfix"></div>
+<?php
+// Ensure session is started if not already
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+?>
+<!-- Force globally load premium aesthetic styles onto every legacy page -->
+<link href="css/theme.css" rel="stylesheet" type="text/css" />
 
-						</ul>
-					</nav>
-				</div><!-- /.navbar-collapse -->	
-			</nav>
-		</div>
-		
-		<div class="clearfix"></div>
-	</div>
+<div class="tm-navbar">
+    <div class="container">
+        <!-- Logo -->
+        <a href="index.php" class="tm-logo">
+            <div class="tm-logo-icon">T</div>Travel<span>Mate</span>
+        </a>
+
+        <!-- Desktop Nav -->
+        <ul class="tm-nav-links">
+            <li><a href="index.php">Home</a></li>
+            <li><a href="page.php?type=aboutus">About</a></li>
+            <li><a href="package-list.php">Tour Packages</a></li>
+            <li><a href="page.php?type=contact">Contact Us</a></li>
+            <?php if(!isset($_SESSION['login']) || empty($_SESSION['login'])) { ?>
+                <li><a href="enquiry.php">Enquiry</a></li>
+            <?php } ?>
+        </ul>
+
+        <!-- Auth & Actions -->
+        <div class="tm-auth">
+            <?php if(isset($_SESSION['login']) && !empty($_SESSION['login'])) { ?>
+                <div class="tm-user-dropdown">
+                    <div class="tm-user-avatar">
+                        <?php echo strtoupper(substr($_SESSION['login'], 0, 1)); ?>
+                    </div>
+                    <div class="tm-dropdown-menu">
+                        <div class="tm-dropdown-header">
+                            <span class="dn">My Account</span>
+                            <span class="dl"><?php echo htmlentities($_SESSION['login']); ?></span>
+                        </div>
+                        <div class="divider"></div>
+                        <a href="profile.php"><div class="di" style="background:#f1f5f9;"><i class="fa fa-user"></i></div> Profile</a>
+                        <a href="change-password.php"><div class="di" style="background:#f1f5f9;"><i class="fa fa-key"></i></div> Password</a>
+                        <a href="tour-history.php"><div class="di" style="background:#f1f5f9;"><i class="fa fa-list"></i></div> Tour History</a>
+                        <a href="issuetickets.php"><div class="di" style="background:#f1f5f9;"><i class="fa fa-ticket"></i></div> Tickets</a>
+                        <a href="wishlist.php"><div class="di" style="background:#f1f5f9;"><i class="fa fa-heart"></i></div> Wishlist</a>
+                        <div class="divider"></div>
+                        <a href="logout.php" class="logout-link"><div class="di" style="background:#fef2f2;"><i class="fa fa-sign-out"></i></div> Logout</a>
+                    </div>
+                </div>
+            <?php } else { ?>
+                <a href="admin/index.php" class="tm-btn-ghost" style="border:none; padding:8px" title="Admin Login"><i class="fa fa-lock"></i> Admin</a>
+                <a href="#" class="tm-btn-ghost" data-toggle="modal" data-target="#myModal4">Sign In</a>
+                <a href="#" class="tm-btn-accent" data-toggle="modal" data-target="#myModal">Sign Up</a>
+            <?php } ?>
+            <button class="tm-hamburger"><i class="fa fa-bars"></i></button>
+        </div>
+    </div>
 </div>
+
+<!-- Mobile Menu -->
+<div class="tm-mobile-menu">
+    <a href="index.php"><i class="fa fa-home"></i> Home</a>
+    <a href="page.php?type=aboutus"><i class="fa fa-info-circle"></i> About</a>
+    <a href="package-list.php"><i class="fa fa-suitcase"></i> Tour Packages</a>
+    <a href="page.php?type=contact"><i class="fa fa-phone"></i> Contact Us</a>
+    <?php if(!isset($_SESSION['login']) || empty($_SESSION['login'])) { ?>
+        <a href="enquiry.php"><i class="fa fa-envelope"></i> Enquiry</a>
+        <div class="tm-mobile-auth">
+            <a href="#" class="tm-btn-ghost" data-toggle="modal" data-target="#myModal4" style="background:rgba(255,255,255,0.1)">Sign In</a>
+            <a href="#" class="tm-btn-accent" data-toggle="modal" data-target="#myModal">Sign Up</a>
+        </div>
+    <?php } else { ?>
+        <a href="profile.php"><i class="fa fa-user"></i> Profile</a>
+        <a href="change-password.php"><i class="fa fa-key"></i> Password</a>
+        <a href="tour-history.php"><i class="fa fa-list"></i> Tour History</a>
+        <a href="issuetickets.php"><i class="fa fa-ticket"></i> Tickets</a>
+        <a href="wishlist.php"><i class="fa fa-heart"></i> Wishlist</a>
+        <a href="logout.php" style="color:#ef4444!important"><i class="fa fa-sign-out"></i> Logout</a>
+    <?php } ?>
+</div>
+
+<script>
+$('.tm-hamburger').click(function(){
+    $('.tm-mobile-menu').slideToggle();
+});
+$(window).scroll(function(){
+    if($(this).scrollTop() > 50) { $('.tm-navbar').addClass('scrolled'); }
+    else { $('.tm-navbar').removeClass('scrolled'); }
+});
+</script>

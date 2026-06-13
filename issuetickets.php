@@ -18,6 +18,7 @@ else{
 <script type="applijewelleryion/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
 <link href="css/bootstrap.css" rel='stylesheet' type='text/css' />
 <link href="css/style.css" rel='stylesheet' type='text/css' />
+<link href="css/theme.css" rel='stylesheet' type='text/css' />
 <link href='//fonts.googleapis.com/css?family=Open+Sans:400,700,600' rel='stylesheet' type='text/css'>
 <link href='//fonts.googleapis.com/css?family=Roboto+Condensed:400,700,300' rel='stylesheet' type='text/css'>
 <link href='//fonts.googleapis.com/css?family=Oswald' rel='stylesheet' type='text/css'>
@@ -52,13 +53,12 @@ else{
 		</style>
 </head>
 <body>
-<!-- top-header -->
-<div class="top-header">
+<body>
 <?php include('includes/header.php');?>
-<div class="banner-1 ">
-	<div class="container">
-		<h1 class="wow zoomIn animated animated" data-wow-delay=".5s" style="visibility: visible; animation-delay: 0.5s; animation-name: zoomIn;">TravelMate</h1>
-	</div>
+
+<div class="tm-page-hero">
+	<h1 class="wow zoomIn animated" data-wow-delay=".5s">Issue Tickets</h1>
+	<p>View your support requests</p>
 </div>
 <!--- /banner-1 ---->
 <!--- privacy ---->
